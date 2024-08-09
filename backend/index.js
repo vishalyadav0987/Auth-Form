@@ -4,12 +4,13 @@ const PORT = process.env.PORT || 3000;
 const app = express();
 const cookieParser = require('cookie-parser');
 const connectDB = require("./connectDB/connect");
+const authRoutes = require('./routes/authRoutes');
 
 app.use(express.json());
 app.use(cookieParser());
 
 
-
+app.use("/api/v1/auth", authRoutes);
 
 app.use("/test", (req, res) => {
     res.send("This route using for testing purpose. Yaah it's working");
