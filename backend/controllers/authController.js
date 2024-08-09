@@ -1,5 +1,5 @@
 const generateAndSetToken = require('../generateToken/generateTokenAndSetToken');
-const { sendVerificationEmail, sendWelcomeEmail, sendForgetPasswordEmail } = require('../mailTrap/email');
+const { sendVerificationEmail, sendWelcomeEmail, sendForgetPasswordEmail, sendResetPasswordSuccessfullEmail } = require('../mailTrap/email');
 const UserSchema = require('../models/UserSchema');
 const bcryptJs = require('bcryptjs');
 const crypto = require('crypto')
@@ -219,10 +219,59 @@ const forgetPassword = async (req, res) => {
 }
 
 
+const resetPassword = async (req, res) => {
+    const { token } = req.params;
+    const { password } = req.body;
+    try {
+        if (!password) {
+            return res.json({
+                success: false,
+                message: "Please enter the new Password",
+            })
+        }
+        const user = await UserSchema.findOne({
+            resetPasswordToken: token,
+            resetPasswordTokenExpiresAt: { $gt: Date.now() },
+        });
+
+        if (!user) {
+            return res.json({
+                success: false,
+                message: "User not found",
+            });
+        }
+
+        // update password
+        const hashedPassword = await bcryptJs.hash(password, 10);
+
+        user.password = hashedPassword;
+
+        user.resetPasswordToken = undefined;
+        user.resetPasswordTokenExpiresAt = undefined;
+
+        await user.save();
+
+
+        // SEND EMAIL IF PASSWORD SUCCESFULLY RESET
+        sendResetPasswordSuccessfullEmail(user.email)
+
+        res.status(200).json({ success: true, message: "Password reset successful" });
+
+    } catch (error) {
+        console.log("Error in backend resetPassword function->", error.message);
+        res.json({
+            success: false,
+            message: "You can't resetPassword,Please try again later."
+        })
+    }
+}
+
+
 module.exports = {
     signUp,
     verifyEmail,
     signIn,
     logout,
     forgetPassword,
+    resetPassword,
 }
