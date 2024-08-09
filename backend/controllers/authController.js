@@ -106,8 +106,59 @@ const verifyEmail = async (req, res) => {
     }
 }
 
+const signIn = async (req, res) => {
+    try {
+        const { email, password } = req.body;
+        if (!email || !password) {
+            return res.json({
+                success: false,
+                message: "All fields are required.",
+            })
+        }
+        const user = await UserSchema.findOne({ email });
+
+        if (!user) {
+            return res.json({
+                success: false,
+                message: "Invalid credentials",
+            })
+        }
+
+        const isPasswordMatch = await bcryptJs.compare(password, user.password);
+        if (!isPasswordMatch) {
+            return res.json({
+                success: false,
+                message: "Invalid credentials",
+            })
+        }
+
+        user.lastLogin = new Date();
+        await user.save();
+
+        generateAndSetToken(user._id, res);
+
+        res.status(200).json({
+            success: true,
+            message: "Logged in successfully",
+            data: {
+                ...user._doc,
+                password: undefined,
+            }
+        })
+
+
+    } catch (error) {
+        console.log("Error in backend login function->", error.message);
+        res.json({
+            success: false,
+            message: "You can't logged in,Please try again later."
+        })
+    }
+}
+
 
 module.exports = {
     signUp,
     verifyEmail,
+    signIn,
 }
