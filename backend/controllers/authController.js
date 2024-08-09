@@ -1,7 +1,8 @@
 const generateAndSetToken = require('../generateToken/generateTokenAndSetToken');
-const { sendVerificationEmail, sendWelcomeEmail } = require('../mailTrap/email');
+const { sendVerificationEmail, sendWelcomeEmail, sendForgetPasswordEmail } = require('../mailTrap/email');
 const UserSchema = require('../models/UserSchema');
 const bcryptJs = require('bcryptjs');
+const crypto = require('crypto')
 
 
 const signUp = async (req, res) => {
@@ -172,10 +173,56 @@ const logout = async (req, res) => {
     }
 }
 
+const forgetPassword = async (req, res) => {
+    const { email } = req.body;
+    try {
+        if (!email) {
+            return res.json({
+                success: false,
+                message: "Please enter the email",
+            });
+        }
+
+        const user = await UserSchema.findOne({ email });
+
+        if (!user) {
+            return res.json({
+                success: false,
+                message: "User not found",
+            });
+        }
+
+        // Generate reset token
+        const resetToken = crypto.randomBytes(20).toString("hex");
+        const resetTokenExpiresAt = Date.now() + 1 * 60 * 60 * 1000; // 1 hour
+
+        user.resetPasswordToken = resetToken
+        // user.resetPasswordTokenExpiresAt=Date.now() + 24 * 60 * 60 * 1000 // 24 hour
+        user.resetPasswordTokenExpiresAt = resetTokenExpiresAt // 1 hour
+
+        await user.save();
+
+        // SEND EMAIL TO USER FOR FROGERTING THE PASSWORD AS URL BUTTON
+        sendForgetPasswordEmail(user.email, `${process.env.FRONTEND_URL}/reset-password/${resetToken}`);
+
+        res.json({
+            success: true,
+            message: "Reset password link succesfully sent to ypur email."
+        })
+    } catch (error) {
+        console.log("Error in backend forgetPassword function->", error.message);
+        res.json({
+            success: false,
+            message: "You can't forgetPassword,Please try again later."
+        })
+    }
+}
+
 
 module.exports = {
     signUp,
     verifyEmail,
     signIn,
     logout,
+    forgetPassword,
 }
