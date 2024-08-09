@@ -5,6 +5,7 @@ const {
     signIn,
     logout,
     forgetPassword,
+    resetPassword,
 } = require('../controllers/authController');
 const router = express.Router();
 
@@ -17,6 +18,7 @@ router.route('/logout').post(logout); // logout
 
 router.route('/verify-email').post(verifyEmail);
 router.route("/forget-password").post(forgetPassword);
+router.route("/reset-password/:token").post(resetPassword);
 
 
 module.exports = router;
