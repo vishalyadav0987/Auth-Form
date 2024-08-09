@@ -266,6 +266,20 @@ const resetPassword = async (req, res) => {
     }
 }
 
+const authorizedUser = async (req, res) => {
+    try {
+        const { userId } = req.user;
+        const user = await UserSchema.findById(userId).select("-password");
+        if (!user) {
+            return res.status(400).json({ success: false, message: "User not found" });
+        }
+        res.status(200).json({ success: true, data: user });
+    } catch (error) {
+        console.log("Error in authorizedUser ", error);
+        res.status(400).json({ success: false, message: error.message });
+    }
+}
+
 
 module.exports = {
     signUp,
@@ -274,4 +288,5 @@ module.exports = {
     logout,
     forgetPassword,
     resetPassword,
+    authorizedUser,
 }
