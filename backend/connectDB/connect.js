@@ -1,11 +1,11 @@
-const mongoose = require('mongoose');
+const monngose = require('mongoose');
 
 const connectDB = (URI) => {
-    return mongoose.connect(URI).then(() => {
-        console.log("Dtabase is successfully connected.");
+    return monngose.connect(URI).then(() => {
+        console.log("Database is connected to successfully.");
     }).catch((err) => {
-        console.log("Something went wrong in databse.")
-    })
+        console.log("Somethig went worng!, connectDB function.",err.message);
+    });
 }
 
 module.exports = connectDB;
