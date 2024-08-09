@@ -156,9 +156,26 @@ const signIn = async (req, res) => {
     }
 }
 
+const logout = async (req, res) => {
+    try {
+        res.clearCookie("token");
+        res.json({
+            success: true,
+            message: "User Successfully logged out."
+        })
+    } catch (error) {
+        console.log("Error in backend logout function->", error.message);
+        res.json({
+            success: false,
+            message: "You can't logout,Please try again later."
+        })
+    }
+}
+
 
 module.exports = {
     signUp,
     verifyEmail,
     signIn,
+    logout,
 }
