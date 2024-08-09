@@ -1,5 +1,5 @@
 const generateAndSetToken = require('../generateToken/generateTokenAndSetToken');
-const { sendVerificationEmail } = require('../mailTrap/email');
+const { sendVerificationEmail, sendWelcomeEmail } = require('../mailTrap/email');
 const UserSchema = require('../models/UserSchema');
 const bcryptJs = require('bcryptjs');
 
@@ -22,10 +22,10 @@ const signUp = async (req, res) => {
             })
         }
 
-        const genSalt = bcryptJs.genSalt(10);
-        const hassPassword = await bcryptJs.hash(password, genSalt);
 
-        const verificationToken = Math.floor(100000, Math.round() * 900000).toString();
+        const hassPassword = await bcryptJs.hash(password, 10);
+
+        const verificationToken = Math.floor(100000 + Math.random() * 900000).toString();
 
         const newUser = new UserSchema({
             name,
@@ -37,11 +37,11 @@ const signUp = async (req, res) => {
 
         await newUser.save();
 
-        await generateAndSetToken(newUser._id, res);
+        generateAndSetToken(newUser._id, res);
 
 
         // SEND EMAIL TO USER VERIFYTOKEN FOR VERIFY EMAIL
-        sendVerificationEmail(newUser.email, user.verificationToken)
+        await sendVerificationEmail(newUser.email, verificationToken)
 
         res.json({
             success: true,
@@ -60,7 +60,54 @@ const signUp = async (req, res) => {
     }
 }
 
+const verifyEmail = async (req, res) => {
+    try {
+        const { code } = req.body;
+        if (!code) {
+            return res.json({
+                success: false,
+                message: "fields are required.",
+            })
+        }
+        const user = await UserSchema.findOne({
+            verificationToken: code,
+            verificationTokenExpiresAt: { $gt: Date.now() }
+        });
+
+        if (!user) {
+            return res.json({
+                success: false,
+                message: "Invalid verification code",
+            })
+        }
+
+        user.isVerified = true;
+        user.verificationToken = undefined;
+        user.verificationTokenExpiresAt = undefined;
+        await user.save();
+
+        await sendWelcomeEmail(user.email, user.name);
+
+        res.status(200).json({
+            success: true,
+            message: "Email verified successfully",
+            user: {
+                ...user._doc,
+                password: undefined,
+            }
+        })
+
+    } catch (error) {
+        console.log("Error in backend verifyEmail function->", error.message);
+        res.json({
+            success: false,
+            message: "You can't verifyEmail,Please try again later."
+        })
+    }
+}
+
 
 module.exports = {
     signUp,
+    verifyEmail,
 }
