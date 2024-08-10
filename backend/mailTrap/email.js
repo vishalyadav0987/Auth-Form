@@ -9,7 +9,7 @@ const sendVerificationEmail = async (email, verificationToken) => {
         const response = await mailtrapClient.send({
             from: sender,
             to: recipient,
-            subject: "Verify ypur email",
+            subject: "Verify your email",
             html: VERIFICATION_EMAIL_TEMPLATE.replace("{verificationCode}", verificationToken),
             category: "Email Verification",
         })
