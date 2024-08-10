@@ -11,15 +11,21 @@ import {
     useColorModeValue,
     createIcon,
     Spinner,
+    Menu,
+    MenuButton,
+    Portal,
+    MenuList,
+    MenuItem,
 } from '@chakra-ui/react'
 import { useAuthContext } from '../../Context/AuthContext';
 import { IoIosLogOut } from "react-icons/io";
+import { FaRegUser } from "react-icons/fa";
 import toast from "react-hot-toast";
 import axios from 'axios';
 
 
 export default function Home() {
-    const { setAuthUser, setIsAuthenticate, setLoading, loading } = useAuthContext()
+    const { setAuthUser, setIsAuthenticate, setLoading, loading, authUser } = useAuthContext()
 
     const handleLogout = async () => {
         console.log("click")
@@ -53,8 +59,31 @@ export default function Home() {
                         display: "flex",
                         justifyContent: "end",
                         padding: "20px",
+                        alignItems: "center",
+                        gap: "20px"
                     }}>
-                        <IoIosLogOut
+                        <Text>{authUser && authUser?.email}</Text>
+                        <Menu>
+                            <MenuButton> <div><FaRegUser cursor={"pointer"}
+                                style={{
+                                    textAlign: "end",
+                                    fontSize: "24px",
+                                    background: "#fff",
+                                    width: "45px",
+                                    height: "45px",
+                                    padding: "10px",
+                                    borderRadius: "8px",
+                                    boxShadow: "rgba(0, 0, 0, 0.1) 0px 2px 5px"
+                                }} /></div></MenuButton>
+                            <Portal>
+                                <MenuList>
+                                    <MenuItem>{authUser && authUser?.name}</MenuItem>
+                                    <MenuItem>Joined Date: {authUser?.createdAt.slice(0, 10)}</MenuItem>
+                                    <MenuItem>Last Login: {authUser?.lastLogin.slice(0, 10)}</MenuItem>
+                                </MenuList>
+                            </Portal>
+                        </Menu>
+                        <div> <IoIosLogOut
                             cursor={"pointer"}
                             style={{
                                 textAlign: "end",
@@ -66,7 +95,7 @@ export default function Home() {
                                 borderRadius: "8px",
                                 boxShadow: "rgba(0, 0, 0, 0.1) 0px 2px 5px"
                             }}
-                            onClick={handleLogout} />
+                            onClick={handleLogout} /></div>
                     </div>
             }
             <Container maxW={'4xl'} bg={"#f6f2e7"}>
