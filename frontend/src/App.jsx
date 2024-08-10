@@ -90,6 +90,8 @@ const App = () => {
               <ResetPassword />
             </RedirectAuthenticatedUser>
           } />
+          {/* catch all routes */}
+          <Route path='*' element={<Navigate to={'/'} />} />
         </Routes>
       </div>
     </>
