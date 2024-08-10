@@ -68,7 +68,7 @@ const sendResetPasswordSuccessfullEmail = async (email) => {
         const response = await mailtrapClient.send({
             from: sender,
             to: recipient,
-            subject: "Password Reset Successful",
+            subject: "Password Reset Successfully",
             html: PASSWORD_RESET_SUCCESS_TEMPLATE,
             category: "Password Reset",
         })
