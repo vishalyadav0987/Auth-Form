@@ -63,7 +63,7 @@ export default function LoginPage() {
             <Stack spacing={8} mx={'auto'} maxW={'lg'} py={12} px={6}>
                 <Stack align={'center'}>
                     <Heading fontSize={'4xl'} textAlign={'center'}>
-                        Login another another
+                        Login another
                     </Heading>
                 </Stack>
                 <Box
