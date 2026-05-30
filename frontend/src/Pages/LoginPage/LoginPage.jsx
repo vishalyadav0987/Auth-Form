@@ -63,7 +63,7 @@ export default function LoginPage() {
             <Stack spacing={8} mx={'auto'} maxW={'lg'} py={12} px={6}>
                 <Stack align={'center'}>
                     <Heading fontSize={'4xl'} textAlign={'center'}>
-                        Login again Changing again anoter another another another
+                        Login again Changing again anoter another another another another
                     </Heading>
                 </Stack>
                 <Box
