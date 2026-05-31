@@ -1,0 +1,41 @@
+version: "3.8"
+services:
+  frontend:
+    build: ./frontend
+    container_name: ${DEPLOYMENT_ID}-frontend
+    environment:
+      - DEPLOYMENT_ID=${DEPLOYMENT_ID}
+    labels:
+      - traefik.enable=true
+      - traefik.docker.network=ephemeral-orchestrator_default
+      - traefik.http.routers.${DEPLOYMENT_ID}-front.rule=Host(`${DEPLOYMENT_ID}.localhost`)
+      - traefik.http.services.${DEPLOYMENT_ID}-front.loadbalancer.server.port=80
+    networks:
+      - orchestrator-net
+  backend:
+    build: ./backend
+    container_name: ${DEPLOYMENT_ID}-backend
+    environment:
+      - DEPLOYMENT_ID=${DEPLOYMENT_ID}
+      - MONGO_URL=mongodb://database:27017
+    labels:
+      - traefik.enable=true
+      - traefik.docker.network=ephemeral-orchestrator_default
+      - traefik.http.routers.${DEPLOYMENT_ID}-api.rule=Host(`${DEPLOYMENT_ID}.localhost`)
+        && PathPrefix(`/api`)
+      - traefik.http.middlewares.${DEPLOYMENT_ID}-api-strip.stripprefix.prefixes=/api
+      - traefik.http.routers.${DEPLOYMENT_ID}-api.middlewares=${DEPLOYMENT_ID}-api-strip
+      - traefik.http.services.${DEPLOYMENT_ID}-api.loadbalancer.server.port=3000
+    networks:
+      - orchestrator-net
+    depends_on:
+      - database
+  database:
+    image: mongo:latest
+    container_name: db-${DEPLOYMENT_ID}
+    networks:
+      - orchestrator-net
+networks:
+  orchestrator-net:
+    external: true
+    name: ephemeral-orchestrator_default
