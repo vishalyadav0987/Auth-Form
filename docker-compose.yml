@@ -31,8 +31,6 @@ services:
       - traefik.docker.network=ephemeral-orchestrator_default
       - traefik.http.routers.${DEPLOYMENT_ID}-api.rule=Host(`${DEPLOYMENT_ID}.localhost`)
         && PathPrefix(`/api/v1`)
-      - traefik.http.middlewares.${DEPLOYMENT_ID}-api-strip.stripprefix.prefixes=/api/v1
-      - traefik.http.routers.${DEPLOYMENT_ID}-api.middlewares=${DEPLOYMENT_ID}-api-strip
       - traefik.http.services.${DEPLOYMENT_ID}-api.loadbalancer.server.port=3000
     networks:
       - orchestrator-net
