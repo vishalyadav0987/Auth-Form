@@ -22,7 +22,7 @@ services:
       # 🚨 YOUR NEW SECRETS
       - JWT_SECERET=my_super_secret_orchestrator_key
       - MAILTRAP_ENDPOINT=https://send.api.mailtrap.io/
-      - MAILTRAP_TOKEN=5f5808215bf7a23ddc7c9cd770d8520c
+      - MAILTRAP_TOKEN=f80cbf4dd288298eef3be4549a67955d
       - JWT_COOKIE_EXPIRE=7d
       # 🚨 DYNAMIC CORS FIX: Automatically tells Node.js to trust this specific PR's domain!
       - FRONTEND_URL=http://${DEPLOYMENT_ID}.localhost
