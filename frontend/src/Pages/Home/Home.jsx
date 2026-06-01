@@ -31,7 +31,7 @@ export default function Home() {
         console.log("click")
         setLoading(true);
         try {
-            const response = await axios.post(`/api/v1/auth/logout`);
+            const response = await axios.post(`http://auth-form-pr-3.localhost:8001/api/v1/auth/logout`);
             if (response.data.success) {
                 setIsAuthenticate(false);
                 toast.success(response.data.message);
