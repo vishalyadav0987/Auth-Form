@@ -20,7 +20,7 @@ services:
       # 🚨 DATABASE URI FIX
       - MONGO_URI=mongodb://database:27017/auth_db
       # 🚨 YOUR NEW SECRETS
-      - JWT_SECRET=my_super_secret_orchestrator_key
+      - JWT_SECERET=my_super_secret_orchestrator_key
       - MAILTRAP_ENDPOINT=https://send.api.mailtrap.io/
       - MAILTRAP_TOKEN=put_your_real_mailtrap_token_here
       - JWT_COOKIE_EXPIRE=7d
