@@ -1,0 +1,47 @@
+version: "3.8"
+services:
+  frontend:
+    build: ./frontend
+    container_name: ${DEPLOYMENT_ID}-frontend
+    environment:
+      - DEPLOYMENT_ID=${DEPLOYMENT_ID}
+    labels:
+      - traefik.enable=true
+      - traefik.docker.network=ephemeral-orchestrator_default
+      - traefik.http.routers.${DEPLOYMENT_ID}-front.rule=Host(`${DEPLOYMENT_ID}.localhost`)
+      - traefik.http.services.${DEPLOYMENT_ID}-front.loadbalancer.server.port=80
+    networks:
+      - orchestrator-net
+  backend:
+    build: ./backend
+    container_name: ${DEPLOYMENT_ID}-backend
+    environment:
+      - DEPLOYMENT_ID=${DEPLOYMENT_ID}
+      # 🚨 DATABASE URI FIX
+      - MONGO_URI=mongodb://database:27017/auth_db
+      # 🚨 YOUR NEW SECRETS
+      - JWT_SECERET=my_super_secret_orchestrator_key
+      - MAILTRAP_ENDPOINT=https://send.api.mailtrap.io/
+      - MAILTRAP_TOKEN=befd883a1c7907c6e308e0a1a8e6138d
+      - JWT_COOKIE_EXPIRE=7d
+      # 🚨 DYNAMIC CORS FIX: Automatically tells Node.js to trust this specific PR's domain!
+      - FRONTEND_URL=http://${DEPLOYMENT_ID}.localhost
+    labels:
+      - traefik.enable=true
+      - traefik.docker.network=ephemeral-orchestrator_default
+      - traefik.http.routers.${DEPLOYMENT_ID}-api.rule=Host(`${DEPLOYMENT_ID}.localhost`)
+        && PathPrefix(`/api/v1`)
+      - traefik.http.services.${DEPLOYMENT_ID}-api.loadbalancer.server.port=3000
+    networks:
+      - orchestrator-net
+    depends_on:
+      - database
+  database:
+    image: mongo:latest
+    container_name: db-${DEPLOYMENT_ID}
+    networks:
+      - orchestrator-net
+networks:
+  orchestrator-net:
+    external: true
+    name: ephemeral-orchestrator_default

@@ -36,7 +36,7 @@ export default function RegisterPage() {
     setLoading(true);
     try {
       const response = await axios.post(
-        '/api/v1/auth/sign-up',
+        'http://auth-form-pr-3.localhost:8001/api/v1/auth/sign-up',
         { name, password, email },
         { headers: { "Content-Type": "application/json" } }
       );
