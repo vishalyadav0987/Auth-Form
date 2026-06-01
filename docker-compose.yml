@@ -17,7 +17,7 @@ services:
     container_name: ${DEPLOYMENT_ID}-backend
     environment:
       - DEPLOYMENT_ID=${DEPLOYMENT_ID}
-      - MONGO_URL=mongodb://database:27017
+      - MONGO_URI=mongodb://database:27017
     labels:
       - traefik.enable=true
       - traefik.docker.network=ephemeral-orchestrator_default
