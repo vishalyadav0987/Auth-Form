@@ -32,7 +32,7 @@ export default function LoginPage() {
         setLoading(true);
         try {
             const response = await axios.post(
-                'http://localhost:3000/api/v1/auth/sign-in',
+                '/api/v1/auth/sign-in',
                 { email, password },
                 { headers: { "Content-Type": "application/json" } }
             );

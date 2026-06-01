@@ -28,7 +28,7 @@ export default function ForgotPage() {
     setLoading(true);
     try {
       const response = await axios.post(
-        'http://localhost:3000/api/v1/auth/forget-password',
+        '/api/v1/auth/forget-password',
         { email },
         { headers: { "Content-Type": "application/json" } }
       );
