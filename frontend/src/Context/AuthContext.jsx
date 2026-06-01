@@ -18,7 +18,7 @@ export const AuthContextProvider = ({ children }) => {
     setIsCheckingAuth(true)
     try {
       const response = await axios.get(
-        '/api/v1/auth/check-auth',
+        'http://localhost:3000//api/v1/auth/check-auth',
       ); if (response.data.success) {
         setIsAuthenticate(true);
         setAuthUser(response.data.data);

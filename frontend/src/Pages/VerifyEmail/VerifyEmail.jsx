@@ -45,7 +45,7 @@ export default function VerifyEmail() {
         const verificationCode = code.join("");
         try {
             const response = await axios.post(
-                '/api/v1/auth/verify-email',
+                'http://localhost:3000/api/v1/auth/verify-email',
                 { code: verificationCode },
                 { headers: { "Content-Type": "application/json" } }
             );

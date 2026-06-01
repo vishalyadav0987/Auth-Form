@@ -37,7 +37,7 @@ export default function ResetPassword() {
     }
     try {
       const response = await axios.post(
-        `/api/v1/auth/reset-password/${token}`,
+        `http://localhost:3000/api/v1/auth/reset-password/${token}`,
         { password },
         { headers: { "Content-Type": "application/json" } }
       );
